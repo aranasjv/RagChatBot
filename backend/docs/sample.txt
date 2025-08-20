@@ -1,0 +1,8 @@
+This is a sample document for the RAG (Retrieval-Augmented Generation) pipeline.
+It contains a few lines of text to simulate knowledge that can be retrieved.
+
+Line 1: The quick brown fox jumps over the lazy dog.
+Line 2: Node.js allows you to run JavaScript on the server side.
+Line 3: TypeScript adds type safety to JavaScript.
+Line 4: MongoDB is a NoSQL database suitable for storing JSON-like documents.
+Line 5: Retrieval-Augmented Generation combines a retriever with a generative model.
