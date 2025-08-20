@@ -1,9 +1,10 @@
-import { Box, Paper, Typography, Avatar } from "@mui/material";
+import { Box, Paper, Typography, Avatar, IconButton, Tooltip } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialLight as prismStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
-import React from "react";
+import { vscDarkPlus as prismStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { ContentCopy, Check } from "@mui/icons-material";
+import React, { useState } from "react";
 
 interface Props {
   user: string;
@@ -11,9 +12,16 @@ interface Props {
 }
 
 export default function Message({ user, bot }: Props) {
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const handleCopy = async (code: string) => {
+    await navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
-      
       {/* User Message */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: 1 }}>
         <Paper
@@ -57,22 +65,48 @@ export default function Message({ user, bot }: Props) {
             components={{
               code({ inline, className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || "");
+                const codeString = String(children).replace(/\n$/, "");
+
                 return !inline && match ? (
-                  <SyntaxHighlighter
-                    style={prismStyle}
-                    language={match[1]}
-                    PreTag="div"
-                    customStyle={{
-                      borderRadius: "8px",
-                      padding: "12px",
-                      fontSize: "0.85rem",
-                      backgroundColor: "#272822",
-                      color: "#f8f8f2",
-                    }}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
+                  <Box sx={{ position: "relative", borderRadius: "8px", overflow: "hidden" }}>
+                    {/* Copy button */}
+                    <Tooltip title={copiedCode === codeString ? "Copied!" : "Copy"}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleCopy(codeString)}
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          bgcolor: "rgba(255,255,255,0.15)",
+                          color: "#fff",
+                          "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+                          zIndex: 10,
+                        }}
+                      >
+                        {copiedCode === codeString ? (
+                          <Check fontSize="small" />
+                        ) : (
+                          <ContentCopy fontSize="small" />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+
+                    <SyntaxHighlighter
+                      style={prismStyle}
+                      language={match[1]}
+                      PreTag="div"
+                      customStyle={{
+                        margin: 0,
+                        padding: "14px",
+                        fontSize: "0.85rem",
+                        backgroundColor: "#1e1e1e",
+                      }}
+                      {...props}
+                    >
+                      {codeString}
+                    </SyntaxHighlighter>
+                  </Box>
                 ) : (
                   <code
                     style={{
