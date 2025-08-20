@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Message from "./Message";
 import { Box, TextField, IconButton, CircularProgress } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface ChatMessage {
   userMessage: string;
@@ -52,6 +53,15 @@ export default function Chat({ history }: Props) {
     }
   };
 
+  const clearChat = async () => {
+    try {
+      await fetch("http://localhost:5000/api/chats/clear", { method: "DELETE" });
+      setMessages([]); // Clear frontend too
+    } catch (err) {
+      console.error("❌ Error clearing chat:", err);
+    }
+  };
+
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Messages container */}
@@ -73,7 +83,7 @@ export default function Chat({ history }: Props) {
         <div ref={messagesEndRef} /> {/* Dummy div to scroll into view */}
       </Box>
 
-      {/* Input box */}
+      {/* Input + Clear button */}
       <Box sx={{ display: "flex", gap: 1, p: 2, borderTop: "1px solid #ddd" }}>
         <TextField
           fullWidth
@@ -84,6 +94,9 @@ export default function Chat({ history }: Props) {
         />
         <IconButton color="primary" onClick={sendMessage} disabled={loading || !input.trim()}>
           <SendIcon />
+        </IconButton>
+        <IconButton color="secondary" onClick={clearChat}>
+          <DeleteIcon />
         </IconButton>
       </Box>
     </Box>

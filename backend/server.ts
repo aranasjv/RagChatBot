@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { connectMongo, saveChat, getChats } from "./mongo.ts";
+import { connectMongo, saveChat, getChats, clearChats } from "./mongo.ts";
 import { runRagPipeline } from "./ragPipeline.ts";
 
 const app = express();
@@ -51,6 +51,18 @@ app.get("/api/chats", async (_req, res) => {
     res.json(chats);
   } catch (error) {
     console.error("❌ Error in /api/chats:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Clear chat history
+app.delete("/api/chats/clear", async (_req, res) => {
+  try {
+    const deletedCount = await clearChats();
+    console.log(`🧹 Cleared ${deletedCount} chats from MongoDB`);
+    res.json({ message: `Cleared ${deletedCount} chats` });
+  } catch (error) {
+    console.error("❌ Error in /api/chats/clear:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

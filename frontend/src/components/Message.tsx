@@ -1,9 +1,10 @@
-import React from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialDark, materialLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+// 👇 Fix typing issue here
+import { materialLight as prismStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
+import React from "react";
 
 interface Props {
   user: string;
@@ -32,11 +33,11 @@ export default function Message({ user, bot }: Props) {
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              code({ node, inline, className, children, ...props }) {
+              code({ inline, className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || "");
                 return !inline && match ? (
                   <SyntaxHighlighter
-                    style={materialLight}
+                    style={prismStyle as { [key: string]: React.CSSProperties }}
                     language={match[1]}
                     PreTag="div"
                     {...props}
@@ -44,7 +45,10 @@ export default function Message({ user, bot }: Props) {
                     {String(children).replace(/\n$/, "")}
                   </SyntaxHighlighter>
                 ) : (
-                  <code style={{ backgroundColor: "#ddd", padding: "2px 4px", borderRadius: "4px" }} {...props}>
+                  <code
+                    style={{ backgroundColor: "#ddd", padding: "2px 4px", borderRadius: "4px" }}
+                    {...props}
+                  >
                     {children}
                   </code>
                 );

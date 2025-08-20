@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Container, Typography, CircularProgress, Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Typography, CircularProgress, Box } from "@mui/material";
 import Chat from "./components/Chat";
 
 interface Message {
