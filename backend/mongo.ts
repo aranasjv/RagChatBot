@@ -22,5 +22,5 @@ export async function saveChat(userMessage: string, botReply: string) {
 
 export async function getChats() {
   const chats = db.collection("chats");
-  return chats.find().sort({ timestamp: -1 }).toArray();
+  return chats.find().sort({ timestamp: 1 }).toArray();
 }
